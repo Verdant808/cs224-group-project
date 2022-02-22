@@ -26,7 +26,8 @@ def fileOpen_command():
 	print("File Open!")
 
 def transfApply_command():
-	print("Transformation Apply!")
+	for i in transf_inp.curselection():
+		print(transf_inp.get(i))
 
 def save_command():
 	print("Save!")
