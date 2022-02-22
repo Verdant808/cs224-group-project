@@ -8,7 +8,7 @@ import os
 # first line
 root = tk.Tk()
 # root setup
-root.title('Sunbird')
+root.title('Title')
 root.geometry('800x600')
 root.columnconfigure(1, weight=1)
 root.rowconfigure(2, weight=1)
@@ -23,7 +23,7 @@ def fileChoose_command():
 	print("File Choose!")
 
 def fileOpen_command():
-	print("File Open!")
+	print(fileSelect_inp.get())
 
 def transfApply_command():
 	for i in transf_inp.curselection():
