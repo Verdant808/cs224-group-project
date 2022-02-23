@@ -25,7 +25,7 @@ def dirChoose_command():
 	print("File Choose!")
 
 def dirOpen_command():
-	print(fileSelect_inp.get())
+	print(dirSelect_inp.get())
 
 def transfApply_command():
 	for i in transf_inp.curselection():
