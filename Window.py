@@ -1,4 +1,5 @@
 # Tkinter GUI experiment for CS 224
+# Built alongside: https://www.youtube.com/watch?v=LeeCrwgHYnw&list=PLXlKT56RD3kBUYQiG_jrAMOtm_SfPLvwR
 # @author Nolan Rapp
 
 from PIL import ImageTk, Image
@@ -89,11 +90,20 @@ img_label = tk.Label(root, bg='grey', image=imagePreview)
 img_label.grid(row=2, column=0, padx=2, columnspan=4, sticky='nesw')
 
 # row 3
+discard_btn = tk.Button(root, text='Discard Changes')
+discard_btn.grid(row=99, column=0, padx=2, pady=3, sticky='ew')
+
+def discard_command():
+	# Discard changes, load a fresh copy of the selected image
+	status_label.configure(text='Discarded changes.')
+
+discard_btn.configure(command=discard_command)
+
 status_label = tk.Label(root, text='', anchor='e')
-status_label.grid(row = 99, column = 1, padx=2, pady = 3, sticky = "ew")
+status_label.grid(row = 99, column = 1, padx=2, pady=3, sticky = 'e')
 
 save_btn = tk.Button(root, text='Save')
-save_btn.grid(row=99, column=2, columnspan=2, padx=2, pady=3, sticky = "sew")
+save_btn.grid(row=99, column=2, columnspan=2, padx=2, pady=3, sticky = 'sew')
 
 def save_command():
 	# Save the modified image
