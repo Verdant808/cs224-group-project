@@ -23,12 +23,7 @@ def intensity(pixel):
 
 # gets the lesser value of the RGB representation
 def minimum(pixel):
-    if pixel[0] <= pixel[1] & pixel[0] <= pixel[2]:
-        return pixel[0]
-    elif pixel[1] <= pixel[0] & pixel[1] <= pixel[2]:
-        return pixel[1]
-    elif pixel[2] <= pixel[0] & pixel[2] <= pixel[1]:
-        return pixel[2]
+    return min(pixel)
 
 
 #a vailable sorting function options
