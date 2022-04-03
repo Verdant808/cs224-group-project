@@ -19,12 +19,12 @@ window.geometry('640x700')
 path = os.getcwd() + os.path.sep + 'datafiles'
 spotify.getAlbumCovers(path)
 imageList = [fname for fname in os.listdir(path)]
-imageNames = os.listdir(path)
+imageNames = [x for x in os.listdir(path) if x.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
 imagePath = path + os.path.sep + imageNames[0]
-try: 
-	imageOpen = Image.open(imagePath)
-except IOError:
-	print('oops')
+# try: 
+# 	imageOpen = Image.open(imagePath)
+# except IOError:
+# 	print('oops')
 imagePreview = ImageTk.PhotoImage(Image.open(imagePath))
 current_transformation = ""
 
@@ -79,6 +79,7 @@ image_select_input.bind('<<ComboboxSelected>>', image_select_command)
 def transfApply_command():
 	glitched_pic = glitcher.get_glitched(image_path=imagePath, lower_threshold=0.25, upper_threshold=0.85, angle=0, sorting_func=current_transformation, interval_func='threshold')
 	newImagePath = path + os.path.sep + glitched_pic
+	# print(newImagePath)
 
 	# match current_transformation:
 	# 	case 'Lightness':

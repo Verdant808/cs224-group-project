@@ -4,12 +4,12 @@ from glitchart.sorting import choices as sorting_choices
 from glitchart.sorter import sort_image
 from glitchart.conversion import crop_to
 from datetime import datetime
+import os
 
 def get_glitched(image_path, lower_threshold, upper_threshold, angle, sorting_func, interval_func, output_name=None):
     # open image and add all info to dictionary
     args = {
         'image': Image.open(image_path),
-        'output_name': output_name,
         'lower_threshold': lower_threshold,
         'upper_threshold': upper_threshold,
         'angle': angle,
@@ -21,9 +21,10 @@ def get_glitched(image_path, lower_threshold, upper_threshold, angle, sorting_fu
     if output_name is None: 
         date = datetime.today()
         output_name = f'{date.hour}:{date.minute}:{date.second} {date.month}-{date.day}-{date.year}.png'
+        output_path = os.getcwd() + os.path.sep + 'datafiles' + os.path.sep + output_name
 
     # perform the pixelsorting and save image to pathname
-    pixelsort(**args).save(output_name)
+    pixelsort(**args).save(output_path)
     return output_name
 
 
@@ -38,7 +39,7 @@ def pixelsort(image, lower_threshold, upper_threshold, angle, sorting_func, inte
         upper_threshold=upper_threshold)
 
     # sort the pixels in the intervals
-    sorted_pixels = sort_image(image.size, image_data, intervals, sorting_choices[sorting_func])
+    sorted_pixels = sort_image(image.size, image_data, intervals, sorting_choices[sorting_func.lower()])
 
     # comibine sorted pixels with the original image
     output_img = place_pixels(sorted_pixels, image_data, image.size)
