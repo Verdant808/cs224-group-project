@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, Label
 from PIL import ImageTk, Image
 import os, spotify, shutil, subprocess, threading
+from glitchart import main as glitcher
 
 # first line
 window = tk.Tk()
@@ -20,7 +21,10 @@ spotify.getAlbumCovers(path)
 imageList = [fname for fname in os.listdir(path)]
 imageNames = os.listdir(path)
 imagePath = path + os.path.sep + imageNames[0]
-imageOpen = Image.open(imagePath)
+try: 
+	imageOpen = Image.open(imagePath)
+except IOError:
+	print('oops')
 imagePreview = ImageTk.PhotoImage(Image.open(imagePath))
 current_transformation = ""
 
@@ -73,30 +77,33 @@ image_select_input.bind('<<ComboboxSelected>>', image_select_command)
 
 # transformation selection event
 def transfApply_command():
-	match current_transformation:
-		case 'Lightness':
-			newImagePath = path + os.path.sep + 'temp.png'
-			subprocess.run(['python', '-m', 'glitchart', imagePath,'-o', newImagePath, '-s', 'lightness'])
-		case 'Hue':
-			tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
-			return
-		    # newImagePath = path + os.path.sep + 'temp.png'
-		    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'hue'])
-		case 'Saturation':
-			tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
-			return			
-		    # newImagePath = path + os.path.sep + 'temp.png'
-		    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'saturation'])
-		case 'Intensity':
-			tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
-			return
-		    # newImagePath = path + os.path.sep + 'temp.png'
-		    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'intensity'])
-		case 'Minimum':
-			tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
-			return
-		    # newImagePath = path + os.path.sep + 'temp.png'
-		    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'minimum'])
+	glitched_pic = glitcher.get_glitched(image_path=imagePath, lower_threshold=0.25, upper_threshold=0.85, angle=0, sorting_func=current_transformation, interval_func='threshold')
+	newImagePath = path + os.path.sep + glitched_pic
+
+	# match current_transformation:
+	# 	case 'Lightness':
+	# 		newImagePath = path + os.path.sep + 'temp.png'
+	# 		subprocess.run(['python', '-m', 'glitchart', imagePath,'-o', newImagePath, '-s', 'lightness'])
+	# 	case 'Hue':
+	# 		tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
+	# 		return
+	# 	    # newImagePath = path + os.path.sep + 'temp.png'
+	# 	    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'hue'])
+	# 	case 'Saturation':
+	# 		tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
+	# 		return			
+	# 	    # newImagePath = path + os.path.sep + 'temp.png'
+	# 	    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'saturation'])
+	# 	case 'Intensity':
+	# 		tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
+	# 		return
+	# 	    # newImagePath = path + os.path.sep + 'temp.png'
+	# 	    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'intensity'])
+	# 	case 'Minimum':
+	# 		tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
+	# 		return
+	# 	    # newImagePath = path + os.path.sep + 'temp.png'
+	# 	    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'minimum'])
 
 	imageOpen = Image.open(newImagePath)
 	imagePreview = ImageTk.PhotoImage(imageOpen)

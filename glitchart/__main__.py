@@ -1,20 +1,23 @@
-from time import ctime
 from PIL import Image
-from glitchart.command_line_args import get_args
 from glitchart.main import pixelsort
 from datetime import datetime
 
-args = get_args()
+def get_args(image_path, output_name, lower_threshold, upper_threshold, angle, sorting_func, interval_func):
+    # open image and add all info to dictionary
+    args = {
+        'image': Image.open(image_path),
+        'output_name': output_name,
+        'lower_threshold': lower_threshold,
+        'upper_threshold': upper_threshold,
+        'angle': angle,
+        'sorting_func': sorting_func,
+        'interval_func': interval_func
+    }
 
-# pop image path, open, and add to dictionary
-image_path = args.pop('image')
-args['image'] = Image.open(image_path)
+    # create output path if none is entered
+    if output_name is None: 
+        date = datetime.today()
+        output_name = f'{date.hour}:{date.minute}:{date.second} {date.month}-{date.day}-{date.year}.png'
 
-# pop output path and create if none was entered
-output_path = args.pop('output_name')
-if output_path is None: 
-    date = datetime.today()
-    output_path = f'{date.hour}:{date.minute}:{date.second} {date.month}-{date.day}-{date.year}.png'
-
-# perform the pixelsorting and save image to pathname
-pixelsort(**args).save(output_path)
+    # perform the pixelsorting and save image to pathname
+    pixelsort(**args).save(output_name)

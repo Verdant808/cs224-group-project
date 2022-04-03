@@ -3,14 +3,31 @@ from glitchart.interval_creator import CHOICES as interval_choices
 from glitchart.sorting import choices as sorting_choices
 from glitchart.sorter import sort_image
 from glitchart.conversion import crop_to
+from datetime import datetime
 
-def pixelsort(image,
-    lower_threshold,
-    upper_threshold,
-    angle,
-    sorting_func, 
-    interval_func
-):
+def get_glitched(image_path, lower_threshold, upper_threshold, angle, sorting_func, interval_func, output_name=None):
+    # open image and add all info to dictionary
+    args = {
+        'image': Image.open(image_path),
+        'output_name': output_name,
+        'lower_threshold': lower_threshold,
+        'upper_threshold': upper_threshold,
+        'angle': angle,
+        'sorting_func': sorting_func,
+        'interval_func': interval_func
+    }
+
+    # create output path if none is entered
+    if output_name is None: 
+        date = datetime.today()
+        output_name = f'{date.hour}:{date.minute}:{date.second} {date.month}-{date.day}-{date.year}.png'
+
+    # perform the pixelsorting and save image to pathname
+    pixelsort(**args).save(output_name)
+    return output_name
+
+
+def pixelsort(image, lower_threshold, upper_threshold, angle, sorting_func, interval_func):
     # save copy of original picture, convert to RGBA values, and save pixel data
     original = image
     image = image.convert('RGBA').rotate(angle, expand=True)
