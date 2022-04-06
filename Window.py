@@ -3,6 +3,7 @@
 # @author Nolan Rapp
 
 import tkinter as tk
+from tkinter import *
 from tkinter import ttk, messagebox, Label
 from PIL import ImageTk, Image
 import os, spotify, shutil, subprocess, threading
@@ -17,14 +18,11 @@ window.geometry('640x700')
 # **Note that transformations should modify imageOpen,
 # which can then be used to generate a preview.**
 path = os.getcwd() + os.path.sep + 'datafiles'
+global new_img_path, new_img
 spotify.getAlbumCovers(path)
-imageList = [fname for fname in os.listdir(path)]
+imageList = [fname for fname in os.listdir(path) if fname.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
 imageNames = [x for x in os.listdir(path) if x.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
 imagePath = path + os.path.sep + imageNames[0]
-# try: 
-# 	imageOpen = Image.open(imagePath)
-# except IOError:
-# 	print('oops')
 imagePreview = ImageTk.PhotoImage(Image.open(imagePath))
 current_transformation = ""
 
@@ -32,13 +30,13 @@ current_transformation = ""
 topFrame = tk.Frame(window)
 topFrame.pack(fill=tk.BOTH, expand=1)
 
-# row 0
+# Dropdown 0
 tk_current_image = tk.StringVar()
 image_select_input = tk.ttk.Combobox(topFrame, values=imageList, textvariable=tk_current_image, state='readonly')
 image_select_input.set('Select an image')
 image_select_input.grid(row=0, column=0, columnspan=3, sticky='EW')
 
-# row 1
+# Dropdown 1
 tk_current_transformation = tk.StringVar()
 transformation_select_input = tk.ttk.Combobox(topFrame, values=['Lightness', 'Hue', 'Saturation', 'Intensity', 'Minimum'], textvariable=tk_current_transformation, state='readonly')
 transformation_select_input.set('Select a transformation')
@@ -49,19 +47,31 @@ topFrame.rowconfigure(2, weight=2)
 img_label = tk.Label(topFrame, bg='grey', image=imagePreview, width=640, height=640)
 img_label.grid(row=2, column=0, columnspan=3, sticky='EWNS')
 
+# discard click event
+def discard_command():
+	imageOpen = Image.open(imagePath)
+	imagePreview = ImageTk.PhotoImage(imageOpen)
+	img_label.configure(image=imagePreview)
+	img_label.image = imagePreview
+
 # row 3 - column 0
 topFrame.columnconfigure(0, weight=1)
-discard_btn = tk.Button(topFrame, text="Undo")
-discard_btn.grid(row=3, column=0, sticky='EW')
+discard_btn = tk.Button(topFrame, text="Undo", command= discard_command)
+discard_btn.grid(row=3, column=0, sticky='EW');
 
 # row 3 - column 1
 topFrame.columnconfigure(1, weight=5)
 processing_bar = ttk.Progressbar( topFrame, orient='horizontal', mode='indeterminate')
 processing_bar.grid(row=3, column=1, sticky='EW')
 
+# save function called when 'Save' button is clicked
+def img_save():
+	global new_img, new_img_path
+	new_img.save(new_img_path)
+
 # row 3 - column 2
 topFrame.columnconfigure(2, weight=1)
-save_btn = tk.Button(topFrame, text="Save")
+save_btn = tk.Button(topFrame, text="Save", command=img_save)
 save_btn.grid(row=3, column=2, sticky='EW')
 
 ## Events
@@ -75,38 +85,17 @@ def image_select_command(event):
 	img_label.image = imagePreview
 image_select_input.bind('<<ComboboxSelected>>', image_select_command)
 
-# transformation selection event
+# Applies the glitcher to selected image
 def transfApply_command():
-	glitched_pic = glitcher.get_glitched(image_path=imagePath, lower_threshold=0.25, upper_threshold=0.85, angle=0, sorting_func=current_transformation, interval_func='threshold')
-	newImagePath = path + os.path.sep + glitched_pic
+	global new_img_path, new_img
+
+	glitched_rtn = glitcher.get_glitched(image_path=imagePath, lower_threshold=0.25, upper_threshold=0.85, angle=0, sorting_func=current_transformation, interval_func='threshold')
+	new_img = glitched_rtn['img']
+	new_img_path = glitched_rtn['img_path']
+	# newImagePath = path + os.path.sep + glitched_pic
 	# print(newImagePath)
 
-	# match current_transformation:
-	# 	case 'Lightness':
-	# 		newImagePath = path + os.path.sep + 'temp.png'
-	# 		subprocess.run(['python', '-m', 'glitchart', imagePath,'-o', newImagePath, '-s', 'lightness'])
-	# 	case 'Hue':
-	# 		tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
-	# 		return
-	# 	    # newImagePath = path + os.path.sep + 'temp.png'
-	# 	    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'hue'])
-	# 	case 'Saturation':
-	# 		tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
-	# 		return			
-	# 	    # newImagePath = path + os.path.sep + 'temp.png'
-	# 	    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'saturation'])
-	# 	case 'Intensity':
-	# 		tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
-	# 		return
-	# 	    # newImagePath = path + os.path.sep + 'temp.png'
-	# 	    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'intensity'])
-	# 	case 'Minimum':
-	# 		tk.messagebox.showwarning("Warning", "Transformation not yet implemented")
-	# 		return
-	# 	    # newImagePath = path + os.path.sep + 'temp.png'
-	# 	    # subprocess.run(['python', '-m', 'glitchart', imagePath, '-o', newImagePath, '-s', 'minimum'])
-
-	imageOpen = Image.open(newImagePath)
+	imageOpen = new_img
 	imagePreview = ImageTk.PhotoImage(imageOpen)
 	img_label.configure(image=imagePreview)
 	img_label.image = imagePreview
@@ -124,13 +113,7 @@ def transformation_select_command(event):
 	threading.Thread(target=run_function).start()
 transformation_select_input.bind('<<ComboboxSelected>>', transformation_select_command)
 
-# discard click event
-def discard_command():
-	imageOpen = Image.open(imagePath)
-	imagePreview = ImageTk.PhotoImage(imageOpen)
-	img_label.configure(image=imagePreview)
-	img_label.image = imagePreview
-discard_btn.configure(command=discard_command)
+# discard_btn.configure(command=discard_command)
 
 # close event
 def on_closing():

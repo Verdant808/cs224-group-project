@@ -24,8 +24,10 @@ def get_glitched(image_path, lower_threshold, upper_threshold, angle, sorting_fu
         output_path = os.getcwd() + os.path.sep + 'datafiles' + os.path.sep + output_name
 
     # perform the pixelsorting and save image to pathname
-    pixelsort(**args).save(output_path)
-    return output_name
+    # pixelsort(**args).save(output_path)
+    # return output_name
+
+    return {'img':pixelsort(**args), 'img_path': output_path}
 
 
 def pixelsort(image, lower_threshold, upper_threshold, angle, sorting_func, interval_func):
