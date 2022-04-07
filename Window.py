@@ -118,9 +118,9 @@ transformation_select_input.bind('<<ComboboxSelected>>', transformation_select_c
 # close event
 def on_closing():
 	if tk.messagebox.askokcancel("Quit", "Do you want to quit?"):
-		imageOpen.close()
-		for file in os.listdir(path):
-			os.remove(os.path.join(path, file))
+		# imageOpen.close()
+		# for file in os.listdir(path):
+		# 	os.remove(os.path.join(path, file))
 		window.destroy()
 window.protocol("WM_DELETE_WINDOW", on_closing)
 
