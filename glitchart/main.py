@@ -6,7 +6,7 @@ from glitchart.conversion import crop_to
 from datetime import datetime
 import os
 
-def get_glitched(image_path, lower_threshold, upper_threshold, angle, sorting_func, interval_func, output_name=None):
+def get_glitched(image_path, sorting_func, interval_func, lower_threshold=0.25, upper_threshold=0.85, angle=0, output_name=None):
     # open image and add all info to dictionary
     args = {
         'image': Image.open(image_path),
@@ -21,7 +21,9 @@ def get_glitched(image_path, lower_threshold, upper_threshold, angle, sorting_fu
     if output_name is None: 
         date = datetime.today()
         output_name = f'{date.hour}:{date.minute}:{date.second} {date.month}-{date.day}-{date.year}.png'
-        output_path = os.getcwd() + os.path.sep + 'datafiles' + os.path.sep + output_name
+    elif not output_name.endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif')):
+        output_name = f'{output_name}.png'
+    output_path = os.getcwd() + os.path.sep + 'datafiles' + os.path.sep + output_name
 
     # perform the pixelsorting and save image to pathname
     # pixelsort(**args).save(output_path)
