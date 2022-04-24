@@ -2,6 +2,9 @@
 # Built alongside: https://www.youtube.com/watch?v=LeeCrwgHYnw&list=PLXlKT56RD3kBUYQiG_jrAMOtm_SfPLvwR
 # @author Nolan Rapp
 
+from doctest import Example
+from struct import pack
+from this import s
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk, messagebox, Label
@@ -27,28 +30,35 @@ imagePath = path + os.path.sep + imageNames[0]
 imagePreview = ImageTk.PhotoImage(Image.open(imagePath))
 current_transformation = ""
 
+picFrame = tk.Frame(window)
+picFrame.pack(fill=tk.BOTH, expand=1, side=tk.RIGHT)
+
 # Make frame fill the whole window
 topFrame = tk.Frame(window)
-topFrame.pack(fill=tk.BOTH, expand=1)
+topFrame.pack(fill=tk.BOTH, expand=1, side=tk.LEFT)
 
 # Dropdown - image selection
 tk_current_image = tk.StringVar()
 image_select_input = tk.ttk.Combobox(topFrame, values=imageList, textvariable=tk_current_image, state='readonly')
 image_select_input.set('Select an image')
-image_select_input.grid(row=0, column=0, columnspan=3, sticky='EW')
+# image_select_input.grid(row=0, column=0, columnspan=3, sticky='EW')
+image_select_input.pack(side=tk.TOP, pady=5, anchor=NW)
 
 # Dropdown - transformation function
 tk_current_transformation = tk.StringVar()
 transformation_select_input = tk.ttk.Combobox(topFrame, values=['Lightness', 'Hue', 'Saturation', 'Intensity', 'Minimum'], textvariable=tk_current_transformation, state='readonly')
 transformation_select_input.set('Select a transformation')
-transformation_select_input.grid(row=1, column=0, columnspan=3, sticky='EW')
+# transformation_select_input.grid(row=1, column=0, columnspan=3, sticky='EW')
+transformation_select_input.pack(side=tk.TOP, pady=5, anchor=NW)
 
 # Dropdown - interval function
 tk_interval = tk.StringVar()
 transformation_select_input = tk.ttk.Combobox(topFrame, values=['Threshold', 'Random', 'None'], textvariable=tk_interval, state='readonly')
 transformation_select_input.set('Select an interval function')
-transformation_select_input.grid(row=2, column=0, columnspan=3, sticky='EW')
+# transformation_select_input.grid(row=2, column=0, columnspan=3, sticky='EW')
+transformation_select_input.pack(side=tk.TOP, pady=5, anchor=NW)
 
+# get input values for parameters to glitcher function
 def print_angle():
 	global angle, outputname, lowerthreshold, upperthreshold, current_transformation, interval
 	angle = int(tk_inputangle.get(1.0, 'end-1c'))
@@ -63,45 +73,55 @@ def print_angle():
 angleText = StringVar()
 angleText.set('Angle:')
 angle_label = Label(topFrame, textvariable=angleText, height=1)
-angle_label.grid(row=3, column=0, columnspan=1, sticky='EW')
+# angle_label.grid(row=3, column=0, columnspan=1, sticky='EW')
+angle_label.pack(side=tk.TOP, pady=5, padx=5, after=transformation_select_input, anchor=NW)
 
 tk_inputangle = tk.Text(topFrame, height=1, width=15)
-tk_inputangle.grid(row=3, column=1, columnspan=1, sticky='EW')
+# tk_inputangle.grid(row=3, column=1, columnspan=1, sticky='EW')
+tk_inputangle.pack(side=tk.TOP, pady=5, padx=5, after=angle_label, anchor=NW)
 
 # output name
 outputText = StringVar()
 outputText.set('Output Name:')
 output_label = Label(topFrame, textvariable=outputText, height=1)
-output_label.grid(row=3, column=2, columnspan=1, sticky='EW')
+# output_label.grid(row=3, column=2, columnspan=1, sticky='EW')
+output_label.pack(side=tk.TOP, pady=5, padx=5, after=tk_inputangle, anchor=NW, )
 
 tk_outputname = tk.Text(topFrame, height=1, width=20)
-tk_outputname.grid(row=3, column=3, columnspan=1, sticky='EW')
+# tk_outputname.grid(row=3, column=3, columnspan=1, sticky='EW')
+tk_outputname.pack(side=tk.TOP, pady=5, padx=5, after=output_label, anchor=NW)
 
 # lower threshold
 lowerText = StringVar()
 lowerText.set('Lower Threshold:')
 lower_label = Label(topFrame, textvariable=lowerText, height=1)
-lower_label.grid(row=4, column=0, columnspan=1, sticky='EW')
+# lower_label.grid(row=4, column=0, columnspan=1, sticky='EW')
+lower_label.pack(side=tk.TOP, pady=5, padx=5, after=tk_outputname, anchor=NW)
 
 tk_lowerthreshold = tk.Text(topFrame, height=1, width=15)
-tk_lowerthreshold.grid(row=4, column=1, columnspan=1, sticky='EW')
+# tk_lowerthreshold.grid(row=4, column=1, columnspan=1, sticky='EW')
+tk_lowerthreshold.pack(side=tk.TOP, pady=5, padx=5, after=lower_label, anchor=NW)
 
 # upper threshold
 upperText = StringVar()
-upperText.set('Lower Threshold:')
+upperText.set('Upper Threshold:')
 upper_label = Label(topFrame, textvariable=upperText, height=1)
-upper_label.grid(row=4, column=2, columnspan=1, sticky='EW')
+# upper_label.grid(row=4, column=2, columnspan=1, sticky='EW')
+upper_label.pack(side=tk.TOP, pady=5, padx=5, anchor=NW)
 
 tk_upperthreshold = tk.Text(topFrame, height=1, width=15)
-tk_upperthreshold.grid(row=4, column=3, columnspan=1, sticky='EW')
+# tk_upperthreshold.grid(row=4, column=3, columnspan=1, sticky='EW')
+tk_upperthreshold.pack(side=tk.TOP, pady=5, padx=5, anchor=NW)
 
 printButton = tk.Button(topFrame, text = 'Glitch', command=print_angle)
-printButton.grid(row=4, column=4, columnspan=1, sticky='EW')
+# printButton.grid(row=4, column=4, columnspan=1, sticky='EW')
+printButton.pack(side=tk.TOP, pady=5, padx=5, anchor=NW)
 
 # row 2
 topFrame.rowconfigure(2, weight=2)
-img_label = tk.Label(topFrame, bg='grey', image=imagePreview, width=640, height=640)
-img_label.grid(row=5, column=0, columnspan=3, sticky='EWNS')
+img_label = tk.Label(picFrame, bg='grey', image=imagePreview, width=640, height=640)
+# img_label.grid(row=5, column=0, columnspan=3, sticky='EWNS')
+img_label.pack(side=tk.TOP, pady=5, padx=5, anchor=NW)
 
 # discard click event
 def discard_command():
@@ -113,12 +133,14 @@ def discard_command():
 # row 3 - column 0
 topFrame.columnconfigure(0, weight=1)
 discard_btn = tk.Button(topFrame, text="Undo", command= discard_command)
-discard_btn.grid(row=6, column=0, sticky='EW');
+# discard_btn.grid(row=6, column=0, sticky='EW');
+discard_btn.pack(side=tk.TOP, pady=5, padx=5, anchor=NW)
 
 # row 3 - column 1
 topFrame.columnconfigure(1, weight=5)
 processing_bar = ttk.Progressbar( topFrame, orient='horizontal', mode='indeterminate')
-processing_bar.grid(row=6, column=1, sticky='EW')
+# processing_bar.grid(row=6, column=1, sticky='EW')
+processing_bar.pack(side=tk.TOP, pady=5, padx=5, anchor=NW)
 
 # save function called when 'Save' button is clicked
 def img_save():
@@ -128,7 +150,8 @@ def img_save():
 # row 3 - column 2
 topFrame.columnconfigure(2, weight=1)
 save_btn = tk.Button(topFrame, text="Save", command=img_save)
-save_btn.grid(row=6, column=2, sticky='EW')
+# save_btn.grid(row=6, column=2, sticky='EW')
+save_btn.pack(side=tk.TOP, pady=5, padx=5, anchor=NW)
 
 ## Events
 # image selection
