@@ -1,8 +1,6 @@
 from PIL import Image
 from glitchart.interval_creator import CHOICES as interval_choices
-from glitchart.sorting import choices as sorting_choices
-from glitchart.sorter import sort_image
-from glitchart.conversion import crop_to
+from glitchart.sorter import sort_image, choices as sorting_choices
 from datetime import datetime
 import os
 
@@ -25,10 +23,7 @@ def get_glitched(image_path, sorting_func, interval_func, lower_threshold=0.25, 
         output_name = f'{output_name}.png'
     output_path = os.getcwd() + os.path.sep + 'datafiles' + os.path.sep + output_name
 
-    # perform the pixelsorting and save image to pathname
-    # pixelsort(**args).save(output_path)
-    # return output_name
-
+    # perform the pixelsorting and return the image and path
     return {'img':pixelsort(**args), 'img_path': output_path}
 
 
@@ -41,7 +36,6 @@ def pixelsort(image, lower_threshold, upper_threshold, angle, sorting_func, inte
     # get intervals
     intervals = interval_choices[interval_func](image, lower_threshold=lower_threshold,
         upper_threshold=upper_threshold)
-
     # sort the pixels in the intervals
     sorted_pixels = sort_image(image.size, image_data, intervals, sorting_choices[sorting_func.lower()])
 
@@ -65,3 +59,20 @@ def place_pixels(pixels, original, size):
             output_img.putpixel((x, y), pixels[y][count])
             count += 1
     return output_img
+
+# used to crop the sorted image to fit the original image
+def crop_to(image_to_crop, reference_image):
+    reference_size = reference_image.size
+    current_size = image_to_crop.size
+    dx = current_size[0] - reference_size[0]
+    dy = current_size[1] - reference_size[1]
+    left = dx / 2
+    upper = dy / 2
+    right = dx / 2 + reference_size[0]
+    lower = dy / 2 + reference_size[1]
+    return image_to_crop.crop(
+        box=(
+            int(left),
+            int(upper),
+            int(right),
+            int(lower)))
