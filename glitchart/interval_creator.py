@@ -18,7 +18,7 @@ def threshold(image, lower_threshold, upper_threshold, **args):
                 intervals[y].append(x)
     return intervals
 
-# TODO: DOESN'T WORK YET
+
 # creates an interval and adds all pixels to for sorting 
 def none(image, **args):
     intervals = []
@@ -34,17 +34,6 @@ def none(image, **args):
             if level < 0 or level > 1:
                 intervals[y].append(x)
     return intervals
-
-    # intervals = []
-
-    # # for each column of pixels
-    # for y in range(image.size[1]):
-    #     intervals.append([])
-    #     # get each individual pixel, row by row
-    #     for x in range(image.size[0]):
-    #         # add pixel to interval
-    #         intervals[y].append(x)
-    # return intervals
 
 
 # creates an interval and adds pixels at random for sorting
