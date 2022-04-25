@@ -22,7 +22,7 @@ window.geometry('900x700')
 # **Note that transformations should modify imageOpen,
 # which can then be used to generate a preview.**
 path = os.getcwd() + os.path.sep + 'datafiles'
-global new_img_path, new_img, angle, outputname, lowerthreshold, upperthreshold, current_transformation
+global new_img_path, new_img, outputname, lowerthreshold, upperthreshold, current_transformation
 spotify.getAlbumCovers(path)
 imageList = [fname for fname in os.listdir(path) if fname.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
 imageNames = [x for x in os.listdir(path) if x.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.bmp', '.gif'))]
@@ -69,11 +69,11 @@ transformation_select_input.grid(row=2, column=0, sticky='EW')
 
 # get input values for parameters to glitcher function
 def print_angle():
-	global angle, outputname, lowerthreshold, upperthreshold, current_transformation, interval
-	if tk_inputangle.get(1.0, 'end-1c') == '':
-		angle = 0
-	else: 
-		angle = int(tk_inputangle.get(1.0, 'end-1c'))
+	global outputname, lowerthreshold, upperthreshold, current_transformation, interval
+	# if tk_inputangle.get(1.0, 'end-1c') == '':
+	# 	angle = 0
+	# else: 
+	# 	angle = int(tk_inputangle.get(1.0, 'end-1c'))
 	outputname = str(tk_outputname.get(1.0, 'end-1c'))
 	if tk_lowerthreshold.get(1.0, 'end-1c') == '':
 		lowerthreshold = 0.35
@@ -88,13 +88,19 @@ def print_angle():
 	transfApply_command()
 
 # angle entry text
-angleText = StringVar()
-angleText.set('Angle:')
-angle_label = Label(angleFrame, textvariable=angleText, height=1)
-angle_label.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
+# angleText = StringVar()
+# angleText.set('Angle:')
+# angle_label = Label(angleFrame, textvariable=angleText, height=1)
+# angle_label.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
 
-tk_inputangle = tk.Text(angleFrame, height=1, width=15)
-tk_inputangle.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
+var = tk.IntVar()
+scale_angle = Scale(window, label='Angle:', orient=HORIZONTAL, variable=var, from_=0, to=360)
+print(int(var.get()))
+angle = int(var.get())
+print(angle)
+scale_angle.grid(row=3, column=0)
+# tk_inputangle = tk.Text(angleFrame, height=1, width=15)
+# tk_inputangle.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
 
 # output name
 outputText = StringVar()
@@ -171,12 +177,14 @@ image_select_input.bind('<<ComboboxSelected>>', image_select_command)
 
 # Applies the glitcher to selected image
 def transfApply_command():
-	global new_img_path, new_img, angle, outputname, lowerthreshold, upperthreshold, current_transformation, interval
+	global new_img_path, new_img, outputname, lowerthreshold, upperthreshold, current_transformation, interval
+	print(angle)
 
 	glitched_rtn = glitcher.get_glitched(image_path=imagePath, lower_threshold=lowerthreshold, upper_threshold=upperthreshold,
 										 angle=angle, sorting_func=current_transformation, interval_func=interval, output_name=outputname)
 	new_img = glitched_rtn['img']
 	new_img_path = glitched_rtn['img_path']
+	# run_function()
 
 	imageOpen = new_img
 	imagePreview = ImageTk.PhotoImage(imageOpen)
