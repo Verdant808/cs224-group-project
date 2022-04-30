@@ -148,17 +148,6 @@ def run_function():
 	transfApply_command()
 	processing_bar.stop()
 
-# transformation selection event
-# def transformation_select_command(event):
-# 	global current_transformation
-# 	current_transformation = tk_current_transformation.get()
-# 	threading.Thread(target=run_function).start()
-# transformation_select_input.bind('<<ComboboxSelected>>', transformation_select_command)
-
-# discard_btn.configure(command=discard_command)
-
-
-
 # glitch button
 printButton = tk.Button(window, text = 'Glitch', command=transfApply_command)
 printButton.grid(row=7, column=0, columnspan=1, sticky='EW')
