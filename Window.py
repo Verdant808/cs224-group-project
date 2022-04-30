@@ -2,9 +2,6 @@
 # Built alongside: https://www.youtube.com/watch?v=LeeCrwgHYnw&list=PLXlKT56RD3kBUYQiG_jrAMOtm_SfPLvwR
 # @author Nolan Rapp
 
-from doctest import Example
-from struct import pack
-from this import s
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk, messagebox, Label
@@ -33,17 +30,11 @@ current_transformation = ""
 # make frames to pack elements
 picFrame = tk.Frame(window)
 dropdowns = tk.Frame(window)
-angleFrame = tk.Frame(window)
 outputNameFrame = tk.Frame(window)
-lowerThreshFrame = tk.Frame(window)
-upperThreshFrame = tk.Frame(window)
 buttonFrame = tk.Frame(window)
 
 # Make frame fill the whole window
 dropdowns.grid(row=0, column=0)
-angleFrame.grid(row=3, column=0)
-lowerThreshFrame.grid(row=4, column=0)
-upperThreshFrame.grid(row=5, column=0)
 outputNameFrame.grid(row=6, column=0)
 
 # Dropdown - image selection
@@ -51,56 +42,22 @@ tk_current_image = tk.StringVar()
 image_select_input = tk.ttk.Combobox(window, values=imageList, textvariable=tk_current_image, state='readonly')
 image_select_input.set('Select an image')
 image_select_input.grid(row=0, column=0, sticky='EW')
-# image_select_input.pack(side=tk.TOP, pady=5, anchor=NW)
 
 # Dropdown - transformation function
 tk_current_transformation = tk.StringVar()
 transformation_select_input = tk.ttk.Combobox(window, values=['Lightness', 'Hue', 'Saturation', 'Intensity', 'Minimum'], textvariable=tk_current_transformation, state='readonly')
 transformation_select_input.set('Select a transformation')
 transformation_select_input.grid(row=1, column=0, sticky='EW')
-# transformation_select_input.pack(side=tk.TOP, pady=5, anchor=NW)
 
 # Dropdown - interval function
 tk_interval = tk.StringVar()
 transformation_select_input = tk.ttk.Combobox(window, values=['Threshold', 'Random', 'None'], textvariable=tk_interval, state='readonly')
 transformation_select_input.set('Select an interval function')
 transformation_select_input.grid(row=2, column=0, sticky='EW')
-# transformation_select_input.pack(side=tk.TOP, pady=5, anchor=NW)
 
-# get input values for parameters to glitcher function
-def print_angle():
-	global outputname, lowerthreshold, upperthreshold, current_transformation, interval
-	# if tk_inputangle.get(1.0, 'end-1c') == '':
-	# 	angle = 0
-	# else: 
-	# 	angle = int(tk_inputangle.get(1.0, 'end-1c'))
-	outputname = str(tk_outputname.get(1.0, 'end-1c'))
-	if tk_lowerthreshold.get(1.0, 'end-1c') == '':
-		lowerthreshold = 0.35
-	else:
-		lowerthreshold = float(tk_lowerthreshold.get(1.0, 'end-1c'))
-	if tk_upperthreshold.get(1.0, 'end-1c') == '':
-		upperthreshold = 0.85
-	else:
-		upperthreshold = float(tk_upperthreshold.get(1.0, 'end-1c'))
-	current_transformation = str(tk_current_transformation.get()).lower()
-	interval = str(tk_interval.get()).lower()
-	transfApply_command()
-
-# angle entry text
-# angleText = StringVar()
-# angleText.set('Angle:')
-# angle_label = Label(angleFrame, textvariable=angleText, height=1)
-# angle_label.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
-
-var = tk.IntVar()
+var = StringVar()
 scale_angle = Scale(window, label='Angle:', orient=HORIZONTAL, variable=var, from_=0, to=360)
-print(int(var.get()))
-angle = int(var.get())
-print(angle)
-scale_angle.grid(row=3, column=0)
-# tk_inputangle = tk.Text(angleFrame, height=1, width=15)
-# tk_inputangle.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
+scale_angle.grid(row=3, column=0, sticky="EW")
 
 # output name
 outputText = StringVar()
@@ -112,26 +69,14 @@ tk_outputname = tk.Text(outputNameFrame, height=1, width=20)
 tk_outputname.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
 
 # lower threshold
-lowerText = StringVar()
-lowerText.set('Lower Threshold:')
-lower_label = Label(lowerThreshFrame, textvariable=lowerText, height=1)
-lower_label.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
-
-tk_lowerthreshold = tk.Text(lowerThreshFrame, height=1, width=15)
-tk_lowerthreshold.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
+lower_scale = Scale(window, label='Lower Threshold:', orient=HORIZONTAL, from_=0.00, to=1.00, resolution=0.01)
+lower_scale.set(0.35)
+lower_scale.grid(row=4, column=0, sticky="EW")
 
 # upper threshold
-upperText = StringVar()
-upperText.set('Upper Threshold:')
-upper_label = Label(upperThreshFrame, textvariable=upperText, height=1)
-upper_label.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
-
-tk_upperthreshold = tk.Text(upperThreshFrame, height=1, width=15)
-tk_upperthreshold.pack(side=tk.LEFT, pady=5, padx=5, anchor=NW)
-
-# glitch button
-printButton = tk.Button(window, text = 'Glitch', command=print_angle)
-printButton.grid(row=7, column=0, columnspan=1, sticky='EW')
+upper_scale = Scale(window, label='Upper Threshold:', orient=HORIZONTAL, from_=0.00, to=1.00, resolution=0.01)
+upper_scale.set(0.85)
+upper_scale.grid(row=5, column=0, sticky="EW")
 
 # picture
 img_label = tk.Label(window, bg='grey', image=imagePreview, width=640, height=640)
@@ -178,7 +123,13 @@ image_select_input.bind('<<ComboboxSelected>>', image_select_command)
 # Applies the glitcher to selected image
 def transfApply_command():
 	global new_img_path, new_img, outputname, lowerthreshold, upperthreshold, current_transformation, interval
-	print(angle)
+	angle = int(scale_angle.get())
+	lowerthreshold = float(lower_scale.get())
+	upperthreshold = float(upper_scale.get())
+	outputname = str(tk_outputname.get(1.0, 'end-1c'))
+	current_transformation = str(tk_current_transformation.get()).lower()
+	interval = str(tk_interval.get()).lower()
+
 
 	glitched_rtn = glitcher.get_glitched(image_path=imagePath, lower_threshold=lowerthreshold, upper_threshold=upperthreshold,
 										 angle=angle, sorting_func=current_transformation, interval_func=interval, output_name=outputname)
@@ -206,13 +157,10 @@ def run_function():
 
 # discard_btn.configure(command=discard_command)
 
-# close event
-def on_closing():
-	# if tk.messagebox.askokcancel("Quit", "Do you want to quit?"):
-		# imageOpen.close()
-		# for file in os.listdir(path):
-		# 	os.remove(os.path.join(path, file))
-		window.destroy()
-window.protocol("WM_DELETE_WINDOW", on_closing)
+
+
+# glitch button
+printButton = tk.Button(window, text = 'Glitch', command=transfApply_command)
+printButton.grid(row=7, column=0, columnspan=1, sticky='EW')
 
 window.mainloop()
