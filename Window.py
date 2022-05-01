@@ -130,7 +130,6 @@ def transfApply_command():
 	current_transformation = str(tk_current_transformation.get()).lower()
 	interval = str(tk_interval.get()).lower()
 
-
 	glitched_rtn = glitcher.get_glitched(image_path=imagePath, lower_threshold=lowerthreshold, upper_threshold=upperthreshold,
 										 angle=angle, sorting_func=current_transformation, interval_func=interval, output_name=outputname)
 	new_img = glitched_rtn['img']
@@ -142,14 +141,19 @@ def transfApply_command():
 	img_label.configure(image=imagePreview)
 	img_label.image = imagePreview
 
-# transformation selection event
+# glitch button
+printButton = tk.Button(window, text = 'Glitch')
+printButton.grid(row=7, column=0, columnspan=1, sticky='EW')
+
+# glitch button click event
+def printButton_command():
+	threading.Thread(target=run_function).start()
+printButton.configure(command=printButton_command)
+
+# transformation apply event
 def run_function():
 	processing_bar.start(interval=10)
 	transfApply_command()
 	processing_bar.stop()
-
-# glitch button
-printButton = tk.Button(window, text = 'Glitch', command=transfApply_command)
-printButton.grid(row=7, column=0, columnspan=1, sticky='EW')
 
 window.mainloop()
